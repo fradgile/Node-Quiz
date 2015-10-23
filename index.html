@@ -1,0 +1,103 @@
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>Styling Excercise</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+.picture-group {
+  float: left;
+  width: 25%;
+  padding: 10px;
+  text-align: center;
+  height: 300px;
+  border: 1px solid black;
+}
+
+.picture-img {
+    width: auto;
+    height: 100px;
+}
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $.ajax({ 
+       type: "GET",
+       dataType: "jsonp",
+       url: "http://localhost:8000/api/Sets",
+       success: function(response){        
+//         console.log(JSON.stringify(response));
+          var randomset = Math.floor((Math.random() * response.length));
+          var set = response[randomset].movies;
+          var setid = response[randomset]._id; // This is the _id from MongoDB
+        
+          for (var i = 0; i < set.length; i++) {          
+            $('#picture-group' + i + ' h2').text(set[i].title);
+            $('#picture-group' + i + ' p').text(set[i].odd);
+            $('#picture-group' + i + ' img').attr("src",set[i].link)
+                                                  .attr('setid',setid)
+                                                  .attr('title',set[i].title)
+//                                                  .attr('odd',set[i].odd)
+                                                  .click(function() {
+                                                    var title = $(this).attr('title');
+                                                    console.log("title = " + title);
+                                                    $.ajax({ 
+                                                       type: "GET",
+                                                       dataType: "jsonp",
+                                                       url: "http://localhost:8000/api/GetOddTitle?id=" + setid,
+                                                       success: function(res){        
+  //                                                        console.log("res = " + JSON.stringify(res));
+                                                          console.log("res.oddTitle = " + res.oddTitle);
+                                                          console.log("title = " + title);                                                       
+                                                          if(title == res.oddTitle){
+                                                            alert( "Correct. Good Guess!");
+                                                          }else{
+                                                            alert( "No good. Try again.");
+                                                          };                                                     
+                                                        },
+                                                        error: function (jqXHR, textStatus, errorThrown) {
+                                                                console.log("jqXHR: " + jqXHR.status + "\ntextStatus: " + textStatus + "\nerrorThrown: " + errorThrown);
+                                                       }
+                                                    });
+                                                  });
+        };
+       },
+       error: function (jqXHR, textStatus, errorThrown) {
+                console.log("jqXHR: " + jqXHR.status + "\ntextStatus: " + textStatus + "\nerrorThrown: " + errorThrown);
+       }
+    });
+});
+</script>
+
+</head>
+<body>
+  	<div class="picture-group" id="picture-group0">
+  		<h2 class="picture-title">Picture #1</h2>
+  		<img src="http://placekitten.com/100/101" alt="" class="picture-img"  id="image0"/>
+  		<p class="picture-caption">Accusamus totam fuga ducimus aperiam, placeat similique vero voluptatibus repellendus quam eligendi.</p>
+  	</div>
+  	<div class="picture-group" id="picture-group1">
+  		<h2 class="picture-title">Picture #2</h2>
+  		<img src="http://placekitten.com/100/98" alt="" class="picture-img" id="image1"/>
+  		<p class="picture-caption">Odio nesciunt aliquam, veritatis et esse magnam vero illo sint praesentium explicabo.</p>
+  	</div>
+  	<div class="picture-group" id="picture-group2">
+  		<h2 class="picture-title">Picture #3</h2>
+  		<img src="http://placekitten.com/103/100" alt="" class="picture-img" id="image2"/>
+  		<p class="picture-caption">Tempore porro, consectetur amet illo accusantium voluptas culpa aut corporis incidunt doloribus!</p>
+  	</div>
+  	<div class="picture-group" id="picture-group3">
+  		<h2 class="picture-title">Picture #4</h2>
+  		<img src="http://placekitten.com/100/100" alt="" class="picture-img" id="image3"/>
+  		<p class="picture-caption">Accusantium blanditiis, provident repellat. Earum optio natus, similique quis odio officia, neque!</p>
+  	</div>
+  </div>
+
+</body>
+</html>
